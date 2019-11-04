@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Month_April</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month April</shortDescription>
+        <value>April</value>
+    </labels>
+    <labels>
+        <fullName>Month_August</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month August</shortDescription>
+        <value>August</value>
+    </labels>
+    <labels>
+        <fullName>Month_December</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month December</shortDescription>
+        <value>December</value>
+    </labels>
+    <labels>
+        <fullName>Month_February</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month February</shortDescription>
+        <value>February</value>
+    </labels>
+    <labels>
+        <fullName>Month_January</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month January</shortDescription>
+        <value>January</value>
+    </labels>
+    <labels>
+        <fullName>Month_July</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month July</shortDescription>
+        <value>July</value>
+    </labels>
+    <labels>
+        <fullName>Month_June</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month June</shortDescription>
+        <value>June</value>
+    </labels>
+    <labels>
+        <fullName>Month_March</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month March</shortDescription>
+        <value>March</value>
+    </labels>
+    <labels>
+        <fullName>Month_May</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month May</shortDescription>
+        <value>May</value>
+    </labels>
+    <labels>
+        <fullName>Month_November</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month November</shortDescription>
+        <value>November</value>
+    </labels>
+    <labels>
+        <fullName>Month_October</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month October</shortDescription>
+        <value>Month October</value>
+    </labels>
+    <labels>
+        <fullName>Month_September</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Month September</shortDescription>
+        <value>September</value>
+    </labels>
+    <labels>
+        <fullName>Upcoming_Overdue</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Upcoming &amp; Overdue</shortDescription>
+        <value>Upcoming &amp; Overdue</value>
+    </labels>
+</CustomLabels>

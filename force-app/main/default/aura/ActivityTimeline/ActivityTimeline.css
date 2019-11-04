@@ -1,0 +1,20 @@
+.THIS .slds-accordion__list-item {
+    border-top: 0;
+}
+
+.THIS .slds-accordion__section{
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+	padding: 0;
+}
+
+.THIS .slds-accordion__summary-heading .slds-button:focus {
+	text-decoration: none;
+}
+
+.THIS .slds-accordion__summary-action {
+	background: rgb(243, 242, 242);
+	padding: 0.5rem;
+	font-weight: 700;
+	font-size: small;
+}

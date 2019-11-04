@@ -1,0 +1,32 @@
+.THIS .slds-timeline__item_expandable.slds-is-open .slds-timeline__item_details {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    padding: 0.75rem;
+}
+
+.THIS .pq--link-wrapper lightning-formatted-url a, 
+.THIS .pq--link-wrapper lightning-formatted-url a:hover, 
+.THIS .pq--link-wrapper lightning-formatted-url a:focus {
+    border-bottom: 1px dotted;
+    text-decoration: none;
+}
+
+.THIS a.pq--link, 
+.THIS a.pq--link:hover, 
+.THIS a.pq--link:focus {
+    border-bottom: 1px dotted;
+    text-decoration: none;
+}
+
+.THIS a.pq--link.pq--link-no-border, 
+.THIS a.pq--link.pq--link-no-border:hover, 
+.THIS a.pq--link.pq--link-no-border:focus {
+    border-bottom: 0px;
+}
+
+.THIS .tenLinesScroll {
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+}

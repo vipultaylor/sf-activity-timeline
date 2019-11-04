@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+  <types>
+    <members>ActivityTimelineController</members>
+    <members>ActivityTimelineControllerTest</members>
+    <members>ActivityTimelineGroup</members>
+    <members>ActivityTimelineModel</members>
+    <members>Utils</members>
+    <name>ApexClass</name>
+  </types>
+  <types>
+    <members>ActivityTimeline</members>
+    <members>ActivityTimelineItem</members>
+    <name>AuraDefinitionBundle</name>
+  </types>
+  <types>
+    <members>Month_April</members>
+    <members>Month_August</members>
+    <members>Month_December</members>
+    <members>Month_February</members>
+    <members>Month_January</members>
+    <members>Month_July</members>
+    <members>Month_June</members>
+    <members>Month_March</members>
+    <members>Month_May</members>
+    <members>Month_November</members>
+    <members>Month_October</members>
+    <members>Month_September</members>
+    <members>Upcoming_Overdue</members>
+    <name>CustomLabel</name>
+  </types>
+  <types>
+    <members>CustomLabels</members>
+    <name>CustomLabels</name>
+  </types>
+  <version>47.0</version>
+</Package>
