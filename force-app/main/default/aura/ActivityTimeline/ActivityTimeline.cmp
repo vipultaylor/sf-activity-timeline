@@ -1,47 +1,77 @@
-<aura:component controller="ActivityTimelineController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+<aura:component controller="ActivityTimelineController" implements="flexipage:availableForRecordHome,force:hasRecordId"
+    access="global">
     <!-- Design Attributes -->
-    <aura:attribute name="includeChildren" type="Boolean"/>
+    <aura:attribute name="includeChildren" type="Boolean" />
 
     <!-- Data Attributes -->
     <aura:attribute name="recordId" type="Id" />
-	<aura:attribute name="record" type="Object" />
-    <aura:attribute name="timelineGroups" type="ActivityTimelineGroup" description="List of Activity Timeline Items grouped by months"/>
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="timelineGroups" type="ActivityTimelineGroup"
+        description="List of Activity Timeline Items grouped by months" />
+    <aura:attribute name="loadLimiter" type="Object" />
 
     <!-- Other Attributes -->
     <aura:attribute name="activeSections" type="List" />
-    <aura:attribute name="isLoading" type="boolean" default="false"/>
-    
+    <aura:attribute name="isLoading" type="boolean" default="false" />
+    <aura:attribute name="loadTimeline" type="boolean" default="false" />
+    <aura:attribute name="isMobile" type="boolean" default="false" />
+    <aura:attribute name="isExpandAll" type="boolean" default="false" />
+
+
+    <!--Handlers-->
     <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
-    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
-    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
-    
-    <force:recordData aura:id="sobjectRecord"
-                      recordId="{!v.recordId}"
-                      targetFields="{!v.record}"
-                      layoutType="FULL"
-                      />
-    
-    <!-- Loading Spinner-->
-    <div class="exampleHolder">
-        <aura:if isTrue="{! v.isLoading }">
-            <lightning:spinner alternativeText="Loading" />
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}" />
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}" />
+
+    <force:recordData aura:id="sobjectRecord" recordId="{!v.recordId}" targetFields="{!v.record}" layoutType="FULL" />
+    <div class="{!v.isMobile?'slds-card ':''}">
+        <!-- Loading Spinner-->
+        <div class="slds-is-relative">
+            <aura:if isTrue="{! v.isLoading }">
+                <lightning:spinner variant="brand" alternativeText="Loading" />
+            </aura:if>
+        </div>
+
+        <aura:if isTrue="{! !empty(v.timelineGroups)}">
+            <!--View Options-->
+            <div class="slds-section slds-is-open slds-p-top_xx-small slds-p-bottom_x-small">
+                <div
+                    class="slds-button-section__buttons slds-text-align_center slds-m-bottom_x-small slds-is-relative slds-float_right">
+                    <lightning:button variant="base" label="Refresh" title="Refresh" onclick="{!c.refreshActivitys}" />
+                    <span> • </span>
+                    <lightning:button variant="base"
+                        label="{!v.isExpandAll?$Label.c.Collapse_Text:$Label.c.Expand_Text}"
+                        title="{!v.isExpandAll?$Label.c.Collapse_Text:$Label.c.Expand_Text}"
+                        onclick="{!c.toggleExpand}" />
+                </div>
+            </div>
+            <br />
+        </aura:if>
+
+        <!-- Task List -->
+        <aura:if isTrue="{!v.loadTimeline}">
+            <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{!v.activeSections}">
+                <aura:iteration items="{!v.timelineGroups}" var="activityGroup" end="{!v.loadLimiter.limit}">
+                    <aura:if isTrue="{! !empty(activityGroup.items)}">
+                        <lightning:accordionSection name="{!activityGroup.sectionName}" label="{!activityGroup.name}">
+                            <aura:set attribute="body">
+                                <ul class="slds-timeline">
+                                    <aura:iteration items="{!activityGroup.items}" var="item">
+                                        <c:ActivityTimelineItem item="{!item}" isExpanded="{!item.isExpanded}" />
+                                    </aura:iteration>
+                                </ul>
+                            </aura:set>
+                        </lightning:accordionSection>
+                    </aura:if>
+                </aura:iteration>
+            </lightning:accordion>
+
+            <aura:if isTrue="{!v.loadLimiter.load}">
+                <div class="slds-text-align_center">
+                    <lightning:button variant="brand-outline" value="{!v.loadLimiter.limit}" label="View More"
+                        title="View More" onclick="{!c.loadActivitys}" />
+                </div>
+            </aura:if>
         </aura:if>
     </div>
-
-    <!-- Task List -->
-    <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{!v.activeSections}">
-        <aura:iteration items="{!v.timelineGroups}" var="activityGroup">
-            <aura:if isTrue="{! !empty(activityGroup.items)}">
-                <lightning:accordionSection name="{!activityGroup.sectionName}" label="{!activityGroup.name}">
-                    <aura:set attribute="body">
-                        <ul class="slds-timeline">
-                            <aura:iteration items="{!activityGroup.items}" var="item">
-                                <c:ActivityTimelineItem item="{!item}" />
-                            </aura:iteration>
-                        </ul>
-                    </aura:set>
-                </lightning:accordionSection>
-            </aura:if>
-        </aura:iteration>
-    </lightning:accordion>    
 </aura:component>

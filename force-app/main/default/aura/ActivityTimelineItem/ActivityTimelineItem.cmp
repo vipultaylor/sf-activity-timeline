@@ -1,7 +1,37 @@
 <aura:component>
-    <aura:attribute name="item" type="ActivityTimelineModel"/>
-    <aura:attribute name="isExpanded" type="boolean" default="false"/>
-    
+    <aura:attribute name="item" type="ActivityTimelineModel" />
+    <aura:attribute name="isExpanded" type="boolean" default="false" />
+    <aura:attribute name="isEdit" type="boolean" default="false" />
+
+    <aura:if isTrue="{!v.isEdit}">
+        <section role="dialog" tabindex="-1" aria-label="Activity Edit" aria-modal="true"
+            aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button onclick="{!c.closeModel}"
+                        class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <lightning:icon iconName="utility:sprite" alternativeText="Close!" title="Close" />
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">
+                        Edit {!v.item.subject}
+                    </h2>
+
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <force:recordEdit aura:id="editForm" recordId="{!v.item.recordId}"
+                        onSaveSuccess="{!c.closeModel}" />
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning:button label="Cancel" title="Cancel" onclick="{! c.closeModel }" />
+                    <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.save }" />
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+
+
     <li>
         <div class="{!'slds-timeline__item_expandable slds-p-bottom_x-small ' +
             if(v.item.activityTimelineType == 'Call', 'slds-timeline__item_call',
@@ -17,31 +47,33 @@
                 <!-- ============= -->
                 <div class="slds-media__figure">
                     <!-- Toggle Icon for the details section -->
-                    <button class="slds-button slds-button_icon" title="{!'Toggle details for ' + v.item.subject}" onclick="{!c.toggleActivityDetail}">
-                        <lightning:icon iconName="utility:switch" size="x-small" class="slds-button__icon slds-timeline__details-action-icon"/>
+                    <button class="slds-button slds-button_icon" title="{!'Toggle details for ' + v.item.subject}"
+                        onclick="{!c.toggleActivityDetail}">
+                        <lightning:icon iconName="utility:switch" size="x-small"
+                            class="slds-button__icon slds-timeline__details-action-icon" />
                     </button>
                     <!-- Task -->
                     <aura:if isTrue="{!v.item.activityTimelineType == 'Task'}">
                         <div class="slds-icon_container slds-icon-standard-task slds-timeline__icon" title="task">
-                            <lightning:icon iconName="standard:task" size="small"/>
+                            <lightning:icon iconName="standard:task" size="small" />
                         </div>
                     </aura:if>
                     <!-- Call -->
                     <aura:if isTrue="{!v.item.activityTimelineType == 'Call'}">
                         <div class="slds-icon_container slds-icon-standard-log-a-call slds-timeline__icon" title="call">
-                            <lightning:icon iconName="standard:log_a_call" size="small"/>
+                            <lightning:icon iconName="standard:log_a_call" size="small" />
                         </div>
                     </aura:if>
                     <!-- Email -->
                     <aura:if isTrue="{!v.item.activityTimelineType == 'Email'}">
                         <div class="slds-icon_container slds-icon-standard-email slds-timeline__icon" title="email">
-                            <lightning:icon iconName="standard:email" size="small"/>
+                            <lightning:icon iconName="standard:email" size="small" />
                         </div>
                     </aura:if>
                     <!-- Event -->
                     <aura:if isTrue="{!v.item.activityTimelineType == 'Event'}">
                         <div class="slds-icon_container slds-icon-standard-event slds-timeline__icon" title="event">
-                            <lightning:icon iconName="standard:event" size="small"/>
+                            <lightning:icon iconName="standard:event" size="small" />
                         </div>
                     </aura:if>
                 </div>
@@ -53,15 +85,18 @@
                             <!-- Mark Task as Complete -->
                             <aura:if isTrue="{!and(v.item.activityTimelineType == 'Task',not(v.item.isComplete))}">
                                 <div class="slds-checkbox">
-                                    <input type="checkbox" name="options" id="{!v.item.recordId}" value="{!v.item.recordId}" />
+                                    <input type="checkbox" name="options" id="{!v.item.recordId}"
+                                        value="{!v.item.recordId}" />
                                     <label class="slds-checkbox__label" for="{!v.item.recordId}">
                                         <span class="slds-checkbox_faux"></span>
-                                        <span class="slds-form-element__label slds-assistive-text">{!'Mark ' + v.item.subject + ' complete'}</span>
+                                        <span class="slds-form-element__label slds-assistive-text">{!'Mark ' +
+                                            v.item.subject + ' complete'}</span>
                                     </label>
                                 </div>
                             </aura:if>
                             <h3 class="slds-truncate" title="{!v.item.subject}">
-                                <a class="pq--link pq--link-no-border" href="{!'/lightning/r/' + v.item.sobjectName + '/' + v.item.recordId + '/view'}">
+                                <a class="pq--link pq--link-no-border"
+                                    href="{!'/lightning/r/' + v.item.sobjectName + '/' + v.item.recordId + '/view'}">
                                     <strong>{!v.item.subject}</strong>
                                 </a>
                             </h3>
@@ -69,7 +104,8 @@
                             <aura:if isTrue="{!v.item.isPriority}">
                                 <div class="slds-no-flex">
                                     <span class="slds-icon_container slds-icon-utility-priority" title="High Priority">
-                                        <lightning:icon iconName="utility:priority" variant="error" size="xx-small" class="slds-m-left_x-small"/>
+                                        <lightning:icon iconName="utility:priority" variant="error" size="xx-small"
+                                            class="slds-m-left_x-small" />
                                     </span>
                                 </div>
                             </aura:if>
@@ -77,7 +113,8 @@
                             <aura:if isTrue="{!v.item.isRecurring}">
                                 <div class="slds-no-flex">
                                     <span class="slds-icon_container slds-icon-utility-rotate" title="Recurring Task">
-                                        <lightning:icon iconName="utility:rotate" size="xx-small" class="slds-m-left_x-small"/>
+                                        <lightning:icon iconName="utility:rotate" size="xx-small"
+                                            class="slds-m-left_x-small" />
                                     </span>
                                 </div>
                             </aura:if>
@@ -85,18 +122,32 @@
                             <aura:if isTrue="{!v.item.hasAttachments}">
                                 <div class="slds-no-flex">
                                     <span class="slds-icon_container slds-icon-utility-attach" title="Attachment">
-                                        <lightning:icon iconName="utility:attach" size="xx-small" class="slds-m-left_x-small"/>
+                                        <lightning:icon iconName="utility:attach" size="xx-small"
+                                            class="slds-m-left_x-small" />
                                     </span>
                                 </div>
                             </aura:if>
                         </div>
                         <div class="slds-timeline__actions slds-timeline__actions_inline">
-                            <p class="{!v.item.isOverdue ? 'slds-timeline__date slds-text-color_error' : 'slds-timeline__date'}">
-                                <aura:if isTrue="{!and(v.item.activityTimelineType != 'Task', v.item.activityTimelineType != 'Call')}">
-                                    <lightning:formattedDateTime value="{!v.item.activityDate}" hour="2-digit" minute="2-digit" hour12="false"/> | 
+                            <p
+                                class="{!v.item.isOverdue ? 'slds-timeline__date slds-text-color_error' : 'slds-timeline__date'}">
+                                <aura:if
+                                    isTrue="{!and(v.item.activityTimelineType != 'Task', v.item.activityTimelineType != 'Call')}">
+                                    <lightning:formattedDateTime value="{!v.item.activityDate}" hour="2-digit"
+                                        minute="2-digit" hour12="false" /> |
                                 </aura:if>
-                                <lightning:formattedDateTime value="{!v.item.activityDate}" day="2-digit" month="short"/>
+                                <lightning:formattedDateTime value="{!v.item.activityDate}" day="2-digit"
+                                    month="short" />
                             </p>
+                            <<<<<<< HEAD <aura:if isTrue="{!and(v.item.activityTimelineType != 'Email')}">
+                                =======
+                                <aura:if isTrue="{!and(v.item.activityTimelineType != 'Email',v.item.access)}">
+                                    >>>>>>> 733af9b30455be207aedfba8f03e1a2d9cbc9b27
+                                    <lightning:buttonMenu onselect="{! c.handleMenuClick }" iconSize="x-small"
+                                        alternativeText="Show More Action" variant="border">
+                                        <lightning:menuItem value="Edit" label="Edit" />
+                                    </lightning:buttonMenu>
+                                </aura:if>
                         </div>
                     </div>
 
@@ -106,7 +157,8 @@
                             <aura:if isTrue="{!v.item.assignedTo.isCurrentUser}">
                                 You
                                 <aura:set attribute="else">
-                                    <a class="pq--link" href="{!'/lightning/r/' + v.item.assignedTo.sobjectName + '/' + v.item.assignedTo.recordId + '/view'}">
+                                    <a class="pq--link"
+                                        href="{!'/lightning/r/' + v.item.assignedTo.sobjectName + '/' + v.item.assignedTo.recordId + '/view'}">
                                         {!v.item.assignedTo.recordName}
                                     </a>
                                 </aura:set>
@@ -117,34 +169,34 @@
                                 </a>
                             </aura:set>
                         </aura:if>
-                        
+
                         <!-- Tense -->
                         <aura:if isTrue="{!v.item.isComplete}">
                             <!-- Past Tense -->
                             <aura:if isTrue="{!v.item.activityTimelineType == 'Task'}">
-                                had a task 
+                                had a task
                             </aura:if>
                             <aura:if isTrue="{!v.item.activityTimelineType == 'Call'}">
-                                logged a call 
+                                logged a call
                             </aura:if>
                             <aura:if isTrue="{!v.item.activityTimelineType == 'Email'}">
-                                sent an email 
+                                sent an email
                             </aura:if>
                             <aura:if isTrue="{!v.item.activityTimelineType == 'Event'}">
-                                had an event 
+                                had an event
                             </aura:if>
 
                             <!-- Future Tense -->
                             <aura:set attribute="else">
                                 {!v.item.assignedTo.isCurrentUser ? 'have' : 'has'}
                                 <aura:if isTrue="{!v.item.activityTimelineType == 'Task'}">
-                                    an upcoming task 
+                                    an upcoming task
                                 </aura:if>
                                 <aura:if isTrue="{!v.item.activityTimelineType == 'Call'}">
-                                    an upcoming call 
+                                    an upcoming call
                                 </aura:if>
                                 <aura:if isTrue="{!v.item.activityTimelineType == 'Event'}">
-                                    an upcoming event 
+                                    an upcoming event
                                 </aura:if>
                             </aura:set>
                         </aura:if>
@@ -155,13 +207,15 @@
                             <aura:if isTrue="{!v.item.recipients[0].isCurrentUser}">
                                 you
                                 <aura:set attribute="else">
-                                    <a class="pq--link" href="{!'/lightning/r/' + v.item.recipients[0].sobjectName + '/' + v.item.recipients[0].recordId + '/view'}">
+                                    <a class="pq--link"
+                                        href="{!'/lightning/r/' + v.item.recipients[0].sobjectName + '/' + v.item.recipients[0].recordId + '/view'}">
                                         {!v.item.recipients[0].recordName}
                                     </a>
                                 </aura:set>
                             </aura:if>
                             <aura:if isTrue="{!v.item.recipients.length > 1}">
-                                and {!v.item.recipients.length - 1} {!v.item.recipients.length == 2 ? 'other' : 'others'}
+                                and {!v.item.recipients.length - 1} {!v.item.recipients.length == 2 ? 'other' :
+                                'others'}
                             </aura:if>
                         </aura:if>
 
@@ -174,8 +228,9 @@
 
                         <!-- Related To -->
                         <aura:if isTrue="{!v.item.relatedTo}">
-                            about 
-                            <a class="pq--link" href="{!'/lightning/r/' + v.item.relatedTo.sobjectName + '/' + v.item.relatedTo.recordId + '/view'}">
+                            about
+                            <a class="pq--link"
+                                href="{!'/lightning/r/' + v.item.relatedTo.sobjectName + '/' + v.item.relatedTo.recordId + '/view'}">
                                 {!v.item.relatedTo.recordName}
                             </a>
                         </aura:if>
@@ -191,7 +246,8 @@
                                     <span class="slds-text-body_medium slds-truncate">
                                         <!-- Assigned To | Sender -->
                                         <aura:if isTrue="{!v.item.assignedTo}">
-                                            <a class="pq--link" href="{!'/lightning/r/' + v.item.assignedTo.sobjectName + '/' + v.item.assignedTo.recordId + '/view'}">
+                                            <a class="pq--link"
+                                                href="{!'/lightning/r/' + v.item.assignedTo.sobjectName + '/' + v.item.assignedTo.recordId + '/view'}">
                                                 {!v.item.assignedTo.recordName}
                                             </a>
                                             <aura:set attribute="else">
@@ -207,11 +263,13 @@
                                     <span class="slds-text-body_medium slds-truncate">
                                         <!-- To | Recipient -->
                                         <aura:if isTrue="{!v.item.recipients}">
-                                            <a class="pq--link" href="{!'/lightning/r/' + v.item.recipients[0].sobjectName + '/' + v.item.recipients[0].recordId + '/view'}">
+                                            <a class="pq--link"
+                                                href="{!'/lightning/r/' + v.item.recipients[0].sobjectName + '/' + v.item.recipients[0].recordId + '/view'}">
                                                 {!v.item.recipients[0].recordName}
                                             </a>
                                             <aura:if isTrue="{!v.item.recipients.length > 1}">
-                                                and {!v.item.recipients.length - 1} {!v.item.recipients.length == 2 ? 'other' : 'others'}
+                                                and {!v.item.recipients.length - 1} {!v.item.recipients.length == 2 ?
+                                                'other' : 'others'}
                                             </aura:if>
                                         </aura:if>
                                         <aura:if isTrue="{!v.item.toEmail}">
@@ -229,15 +287,17 @@
                                 <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
                                     <span class="slds-text-title">Start</span>
                                     <span class="slds-text-body_medium slds-truncate">
-                                        <lightning:formattedDateTime value="{!v.item.startDateTime}" year="numeric" month="numeric" day="numeric" hour="2-digit"
-                                        minute="2-digit" hour12="false"/>
+                                        <lightning:formattedDateTime value="{!v.item.startDateTime}" year="numeric"
+                                            month="numeric" day="numeric" hour="2-digit" minute="2-digit"
+                                            hour12="false" />
                                     </span>
                                 </li>
                                 <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
                                     <span class="slds-text-title">End</span>
                                     <span class="slds-text-body_medium slds-truncate">
-                                        <lightning:formattedDateTime value="{!v.item.endDateTime}" year="numeric" month="numeric" day="numeric" hour="2-digit"
-                                        minute="2-digit" hour12="false"/>
+                                        <lightning:formattedDateTime value="{!v.item.endDateTime}" year="numeric"
+                                            month="numeric" day="numeric" hour="2-digit" minute="2-digit"
+                                            hour12="false" />
                                     </span>
                                 </li>
                             </ul>
