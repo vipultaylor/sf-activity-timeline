@@ -6,6 +6,8 @@ public class ActivityTimelineController {
 
         Set<Id> whatIdSet = new Set<Id>();
         Set<Id> whoIdSet = new Set<Id>();
+        Set<Id> taskIdSet = new Set<Id>();
+        Set<Id> eventIdSet = new Set<Id>();
 
         //Add the record passed
         if(sobjType == Schema.Contact.SObjectType) {
@@ -22,6 +24,12 @@ public class ActivityTimelineController {
                 Map<Id, Contact> mapDirectContacts = new Map<Id, Contact>([SELECT Id FROM Contact WHERE AccountId =: recordId]);
                 whoIdSet.addAll(mapDirectContacts.keySet());
                 
+                /* Uncomment if multi activity sharing is
+                List<TaskRelation> tr=[SELECT Id, RelationId, TaskId FROM TaskRelation WHERE RelationId IN:mapDirectContacts.keySet()];
+                for(TaskRelation t:tr) taskIdSet.add(t.TaskId);
+                List<EventRelation> er=[SELECT Id, RelationId, EventId FROM EventRelation WHERE RelationId IN:mapDirectContacts.keySet()];
+                for(EventRelation e:er) eventIdSet.add(e.EventId);
+                */
                 //Opportunities
                 Map<Id, Opportunity> mapDirectOpportunities = new Map<Id, Opportunity>([SELECT Id FROM Opportunity WHERE AccountId =: recordId]);
                 whatIdSet.addAll(mapDirectOpportunities.keySet());
@@ -36,8 +44,8 @@ public class ActivityTimelineController {
         List<ActivityTimelineModel> lstAllActivities = new List<ActivityTimelineModel>();
 
         // Add Tasks, Emails & Events
-        addTasksAndEmails(lstAllActivities, recordId, whatIdSet, whoIdSet);
-        addEvents(lstAllActivities, recordId, whatIdSet, whoIdSet);
+        addTasksAndEmails(lstAllActivities, recordId, whatIdSet, whoIdSet,taskIdSet);
+        addEvents(lstAllActivities, recordId, whatIdSet, whoIdSet,eventIdSet);
             
         return generateGroups(lstAllActivities);
     }
@@ -85,11 +93,11 @@ public class ActivityTimelineController {
     }
     
     
-    private static void addTasksAndEmails(List<ActivityTimelineModel> returnList, Id recordId, Set<Id> whatIdSet, Set<Id> whoIdSet) {
+    private static void addTasksAndEmails(List<ActivityTimelineModel> returnList, Id recordId, Set<Id> whatIdSet, Set<Id> whoIdSet,Set<Id> taskIdSet) {
         List<Task> taskList = [SELECT Id, ActivityDate, Description, IsRecurrence, OwnerId, Owner.Name, Priority, Status, Subject, 
                                				TaskSubtype, Type, WhatId, What.Name, WhoId, Who.Name
                                	FROM Task
-                               	WHERE WhatId IN: whatIdSet OR WhoId IN: whoIdSet
+                               	WHERE WhatId IN: whatIdSet OR WhoId IN: whoIdSet OR Id IN:taskIdSet
                                		ORDER BY ActivityDate DESC NULLS LAST];
 
         //generate a map of Task Status to get Closed Status
@@ -208,11 +216,11 @@ public class ActivityTimelineController {
         }
     }
 
-    private static void addEvents(List<ActivityTimelineModel> returnList, Id recordId, Set<Id> whatIdSet, Set<Id> whoIdSet) {
+    private static void addEvents(List<ActivityTimelineModel> returnList, Id recordId, Set<Id> whatIdSet, Set<Id> whoIdSet,Set<Id> eventIdSet) {
         List<Event> eventList = [SELECT Id, ActivityDate, Description, EndDateTime, EventSubtype, IsRecurrence, OwnerId, Owner.Name, 
                                  		StartDateTime, Subject, Type, WhatId, What.Name, WhoId, Who.Name
                                 	FROM Event
-                                	WHERE WhatId IN: whatIdSet OR WhoId IN: whoIdSet];
+                                	WHERE WhatId IN: whatIdSet OR WhoId IN: whoIdSet OR Id IN: eventIdSet];
         
         if(eventList.size() > 0) {
             for(Event eventObj: eventList) {

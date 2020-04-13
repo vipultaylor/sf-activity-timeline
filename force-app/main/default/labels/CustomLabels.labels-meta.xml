@@ -91,4 +91,20 @@
         <shortDescription>Upcoming &amp; Overdue</shortDescription>
         <value>Upcoming &amp; Overdue</value>
     </labels>
+    <labels>
+        <fullName>Expand_Text</fullName>
+        <categories>Activity Timeline</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Expand Text</shortDescription>
+        <value>Expand All</value>
+    </labels>
+    <labels>
+        <fullName>Collapse_Text</fullName>
+        <categories>Activity Timeline</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription>Collapse Text</shortDescription>
+        <value>Collapse All</value>
+    </labels>
 </CustomLabels>
