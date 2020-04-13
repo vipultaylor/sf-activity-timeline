@@ -1,3 +1,11 @@
+declare module "@salesforce/label/c.Collapse_Text" {
+    var Collapse_Text: string;
+    export default Collapse_Text;
+}
+declare module "@salesforce/label/c.Expand_Text" {
+    var Expand_Text: string;
+    export default Expand_Text;
+}
 declare module "@salesforce/label/c.Month_April" {
     var Month_April: string;
     export default Month_April;

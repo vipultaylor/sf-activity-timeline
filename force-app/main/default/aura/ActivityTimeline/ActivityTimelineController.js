@@ -1,41 +1,40 @@
 ({
-	doInit : function(component, event, helper) {
-       	// retrieve server method
-        var action = component.get("c.getActivityTimeline");
-        
-        // set method paramaters
-        action.setParams({
-            "recordId" : component.get("v.recordId"),
-            "includeChildren": component.get("v.includeChildren")
-        });
-
-        // set call back instructions
-        action.setCallback(this, function(response){
-            if (response.getState() === "SUCCESS") {
-                var timelineGroups = response.getReturnValue();
-                var activeSections = [];
-                timelineGroups.forEach(function(timelineGroup, index){
-                    var sectionName = 'Section'+index;
-                    activeSections.push(sectionName);
-                    timelineGroup.sectionName = sectionName;
-                });
-
-                // assign server retrieved items to component variable
-                console.log(timelineGroups);
-                component.set("v.timelineGroups", timelineGroups);
-                component.set("v.activeSections", activeSections);
-            }
-        });
-        
-        // queue action on the server
-        $A.enqueueAction(action);
+    doInit: function (component, event, helper) {
+        //Check for component context
+        const isMobile = $A.get("$Browser.formFactor") === 'PHONE';
+        component.set('v.isMobile', isMobile);
+        helper.getAllActivitys(component);
     },
-    
-    showSpinner : function(component, event, helper) {
-        component.set("v.isLoading", true); 
+    refreshActivitys: function (component, event, helper) {
+        component.set("v.isLoading", true)
+        helper.getAllActivitys(component);
     },
-    
-    hideSpinner : function(component, event, helper) {
-        component.set("v.isLoading", false); 
+    toggleExpand: function (component, event, helper) {
+        let isExpandAll = !component.get("v.isExpandAll");
+        let timelineGroups = component.get("v.timelineGroups");
+        //Expanding All Activitys
+        timelineGroups.forEach(function (section) {
+            section.items.forEach(function (item) {
+                item.isExpanded = isExpandAll;
+            });
+        })
+        component.set("v.timelineGroups", timelineGroups)
+        component.set('v.isExpandAll', isExpandAll);
+    },
+    loadActivitys: function (component, event, helper) {
+        let timelineGroups = component.get("v.timelineGroups");
+        let loadLimiter = component.get("v.loadLimiter")
+
+        loadLimiter.limit += 1;
+        loadLimiter.load = loadLimiter.limit < timelineGroups.length;
+
+        component.set("v.loadLimiter", loadLimiter);
+    },
+    showSpinner: function (component, event, helper) {
+        component.set("v.isLoading", true);
+    },
+
+    hideSpinner: function (component, event, helper) {
+        component.set("v.isLoading", false);
     },
 })
