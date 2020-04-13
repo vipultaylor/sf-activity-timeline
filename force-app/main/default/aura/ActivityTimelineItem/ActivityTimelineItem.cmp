@@ -139,10 +139,8 @@
                                 <lightning:formattedDateTime value="{!v.item.activityDate}" day="2-digit"
                                     month="short" />
                             </p>
-                            <<<<<<< HEAD <aura:if isTrue="{!and(v.item.activityTimelineType != 'Email')}">
-                                =======
+                            <aura:if isTrue="{!and(v.item.activityTimelineType != 'Email')}">
                                 <aura:if isTrue="{!and(v.item.activityTimelineType != 'Email',v.item.access)}">
-                                    >>>>>>> 733af9b30455be207aedfba8f03e1a2d9cbc9b27
                                     <lightning:buttonMenu onselect="{! c.handleMenuClick }" iconSize="x-small"
                                         alternativeText="Show More Action" variant="border">
                                         <lightning:menuItem value="Edit" label="Edit" />
