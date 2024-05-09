@@ -146,6 +146,7 @@
                                         <lightning:menuItem value="Edit" label="Edit" />
                                     </lightning:buttonMenu>
                                 </aura:if>
+                             </aura:if>
                         </div>
                     </div>
 
