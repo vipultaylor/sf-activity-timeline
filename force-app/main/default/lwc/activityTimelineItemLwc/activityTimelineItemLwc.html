@@ -1,0 +1,336 @@
+<!--
+  @description       :
+  @author            : Alden Vivian
+  @last modified on  : 09-16-2025
+  @last modified by  : Alden Vivian
+-->
+<template>
+    <li class="slds-timeline__item" role="listitem">
+        <div class={containerClass}>
+            <span class="slds-assistive-text">{item.activityTimelineType}</span>
+
+            <div class="slds-media">
+                <!-- LEFT: ICONS + TOGGLE -->
+                <div class="slds-media__figure">
+                    <!-- Toggle details -->
+                    <lightning-button-icon
+                        class="slds-timeline__details-action slds-m-right_x-small"
+                        icon-name="utility:chevrondown"
+                        size="xx-small"
+                        variant="bare"
+                        alternative-text={toggleTitle}
+                        aria-controls={detailsId}
+                        aria-expanded={isExpanded}
+                        onclick={toggleActivityDetail}
+                    >
+                    </lightning-button-icon>
+
+                    <!-- Activity type icon -->
+                    <template if:true={isTask}>
+                        <div class="slds-icon_container slds-icon-standard-task slds-timeline__icon" title="Task">
+                            <lightning-icon icon-name="standard:task" size="small"></lightning-icon>
+                        </div>
+                    </template>
+                    <template if:true={isCall}>
+                        <div class="slds-icon_container slds-icon-standard-log-a-call slds-timeline__icon" title="Call">
+                            <lightning-icon icon-name="standard:log_a_call" size="small"></lightning-icon>
+                        </div>
+                    </template>
+                    <template if:true={isEmail}>
+                        <div class="slds-icon_container slds-icon-standard-email slds-timeline__icon" title="Email">
+                            <lightning-icon icon-name="standard:email" size="small"></lightning-icon>
+                        </div>
+                    </template>
+                    <template if:true={isEvent}>
+                        <div class="slds-icon_container slds-icon-standard-event slds-timeline__icon" title="Event">
+                            <lightning-icon icon-name="standard:event" size="small"></lightning-icon>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- RIGHT: SUMMARY -->
+                <div class="slds-media__body">
+                    <div class="slds-grid slds-grid_align-spread slds-timeline__trigger">
+                        <div class="slds-grid slds-grid_vertical-align-center slds-truncate_container_75 slds-no-space">
+                            <!-- Complete checkbox (task only, when not complete) -->
+                            <template if:true={showTaskCheckbox}>
+                                <div class="slds-checkbox slds-m-right_x-small">
+                                    <input type="checkbox" id={checkboxId} value={item.recordId} onchange={handleTaskCheckboxChange} />
+                                    <label class="slds-checkbox__label" for={checkboxId}>
+                                        <span class="slds-checkbox_faux"></span>
+                                    </label>
+                                </div>
+                            </template>
+
+                            <!-- Subject (record link) -->
+                            <h3 class="slds-truncate" title={item.subject}>
+                                <template if:true={recordUrl}>
+                                    <lightning-formatted-url
+                                        class="pq--link pq--link-no-border"
+                                        value={recordUrl}
+                                        label={subjectLabel}
+                                        target="_blank"
+                                    >
+                                    </lightning-formatted-url>
+                                </template>
+                                <template if:false={recordUrl}>
+                                    <strong>{subjectLabel}</strong>
+                                </template>
+                            </h3>
+
+                            <!-- Flags -->
+                            <template if:true={item.isPriority}>
+                                <div class="slds-no-flex">
+                                    <span class="slds-icon_container slds-icon-utility-priority" title="High Priority">
+                                        <lightning-icon
+                                            icon-name="utility:priority"
+                                            variant="error"
+                                            size="xx-small"
+                                            class="slds-m-left_x-small"
+                                        ></lightning-icon>
+                                    </span>
+                                </div>
+                            </template>
+                            <template if:true={item.isRecurring}>
+                                <div class="slds-no-flex">
+                                    <span class="slds-icon_container slds-icon-utility-rotate" title="Recurring">
+                                        <lightning-icon icon-name="utility:rotate" size="xx-small" class="slds-m-left_x-small"></lightning-icon>
+                                    </span>
+                                </div>
+                            </template>
+                            <template if:true={item.hasAttachments}>
+                                <div class="slds-no-flex">
+                                    <span class="slds-icon_container slds-icon-utility-attach" title="Has Attachment">
+                                        <lightning-icon icon-name="utility:attach" size="xx-small" class="slds-m-left_x-small"></lightning-icon>
+                                    </span>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Right side date -->
+                        <div class="slds-timeline__actions slds-timeline__actions_inline">
+                            <p class={dateClass}>
+                                <template if:true={showTimeForActivity}>
+                                    <lightning-formatted-date-time
+                                        value={item.activityDate}
+                                        hour="2-digit"
+                                        minute="2-digit"
+                                        hour12="false"
+                                        time-zone={currentUserTimezone}
+                                    ></lightning-formatted-date-time>
+                                    <span> | </span>
+                                </template>
+                                <lightning-formatted-date-time value={item.activityDate} day="2-digit" month="short"></lightning-formatted-date-time>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Byline: who/tense/with/related -->
+                    <p class="slds-m-horizontal_xx-small">
+                        <!-- Assigned To | Sender -->
+                        <template if:true={showAssignedTo}>
+                            <template if:true={isAssignedToCurrentUser}>You</template>
+                            <template if:false={isAssignedToCurrentUser}>
+                                <template if:true={assignedToUrl}>
+                                    <lightning-formatted-url
+                                        class="pq--link"
+                                        value={assignedToUrl}
+                                        label={assignedToRecordName}
+                                        target="_self"
+                                    ></lightning-formatted-url>
+                                </template>
+                                <template if:false={assignedToUrl}>{assignedToRecordName}</template>
+                            </template>
+                        </template>
+
+                        <template if:true={showFromEmail}>
+                            <lightning-formatted-email class="pq--link" value={fromEmailAddress} hide-icon></lightning-formatted-email>
+                        </template>
+
+                        <!-- Tense -->
+                        {activityTenseText}
+
+                        <!-- Recipients -->
+                        <template if:true={showRecipients}>
+                            {relationshipPreposition}
+                            <template if:true={isFirstRecipientCurrentUser}>you</template>
+                            <template if:false={isFirstRecipientCurrentUser}>
+                                <template if:true={firstRecipientUrl}>
+                                    <lightning-formatted-url
+                                        class="pq--link"
+                                        value={firstRecipientUrl}
+                                        label={firstRecipientName}
+                                        target="_self"
+                                    ></lightning-formatted-url>
+                                </template>
+                                <template if:false={firstRecipientUrl}>{firstRecipientName}</template>
+                            </template>
+                            <template if:true={hasMultipleRecipients}> &nbsp;and {additionalRecipientsCount} {additionalRecipientsText} </template>
+                        </template>
+
+                        <!-- To email -->
+                        <template if:true={showToEmail}>
+                            <lightning-formatted-email class="pq--link" value={toEmailAddress} hide-icon></lightning-formatted-email>
+                        </template>
+
+                        <!-- Related To -->
+                        <template if:true={showRelatedTo}>
+                            &nbsp;about&nbsp;
+                            <template if:true={relatedToUrl}>
+                                <lightning-formatted-url
+                                    class="pq--link"
+                                    value={relatedToUrl}
+                                    label={relatedToRecordName}
+                                    target="_self"
+                                ></lightning-formatted-url>
+                            </template>
+                            <template if:false={relatedToUrl}>{relatedToRecordName}</template>
+                        </template>
+                    </p>
+
+                    <!-- DETAILS PANEL -->
+                    <article id={detailsId} class="slds-box slds-timeline__item_details slds-theme_shade" aria-hidden={detailsAriaHidden}>
+                        <!-- Email details -->
+                        <template if:true={isEmail}>
+                            <ul class="slds-list_horizontal slds-wrap">
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">From</span>
+                                    <span class="slds-text-body_medium slds-truncate">
+                                        <template if:true={showAssignedTo}>
+                                            <template if:true={assignedToUrl}>
+                                                <lightning-formatted-url
+                                                    class="pq--link"
+                                                    value={assignedToUrl}
+                                                    label={assignedToRecordName}
+                                                    target="_self"
+                                                ></lightning-formatted-url>
+                                            </template>
+                                            <template if:false={assignedToUrl}>{assignedToRecordName}</template>
+                                        </template>
+                                        <template if:true={showFromEmail}>
+                                            <lightning-formatted-email
+                                                class="pq--link"
+                                                value={fromEmailAddress}
+                                                hide-icon
+                                            ></lightning-formatted-email>
+                                        </template>
+                                    </span>
+                                </li>
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">To</span>
+                                    <span class="slds-text-body_medium slds-truncate">
+                                        <template if:true={showRecipients}>
+                                            <template if:true={firstRecipientUrl}>
+                                                <lightning-formatted-url
+                                                    class="pq--link"
+                                                    value={firstRecipientUrl}
+                                                    label={firstRecipientName}
+                                                    target="_self"
+                                                ></lightning-formatted-url>
+                                            </template>
+                                            <template if:false={firstRecipientUrl}>{firstRecipientName}</template>
+                                            <template if:true={hasMultipleRecipients}>
+                                                &nbsp;and {additionalRecipientsCount} {additionalRecipientsText}
+                                            </template>
+                                        </template>
+                                        <template if:true={showToEmail}>
+                                            <lightning-formatted-email class="pq--link" value={toEmailAddress} hide-icon></lightning-formatted-email>
+                                        </template>
+                                    </span>
+                                </li>
+                            </ul>
+                        </template>
+
+                        <!-- Task details -->
+                        <template if:true={isTask}>
+                            <ul class="slds-list_horizontal slds-wrap">
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">Description</span>
+                                    <span class="slds-text-body_medium slds-truncate"> {item.detail} </span>
+                                </li>
+                            </ul>
+                        </template>
+
+                        <!-- Call details -->
+                        <template if:true={isCall}>
+                            <ul class="slds-list_horizontal slds-wrap">
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">Description</span>
+                                    <span class="slds-text-body_medium slds-truncate"> {item.detail} </span>
+                                </li>
+                            </ul>
+                        </template>
+
+                        <!-- Event details -->
+                        <template if:true={isEvent}>
+                            <ul class="slds-list_horizontal slds-wrap">
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">Start</span>
+                                    <span class="slds-text-body_medium slds-truncate">
+                                        <lightning-formatted-date-time
+                                            value={item.startDateTime}
+                                            year="numeric"
+                                            month="numeric"
+                                            day="numeric"
+                                            hour="2-digit"
+                                            minute="2-digit"
+                                            hour12="false"
+                                        >
+                                        </lightning-formatted-date-time>
+                                    </span>
+                                </li>
+                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                    <span class="slds-text-title">End</span>
+                                    <span class="slds-text-body_medium slds-truncate">
+                                        <lightning-formatted-date-time
+                                            value={item.endDateTime}
+                                            year="numeric"
+                                            month="numeric"
+                                            day="numeric"
+                                            hour="2-digit"
+                                            minute="2-digit"
+                                            hour12="false"
+                                        >
+                                        </lightning-formatted-date-time>
+                                    </span>
+                                </li>
+                            </ul>
+                        </template>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </li>
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Header -->
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Choose Status</h2>
+                </header>
+
+                <!-- Body -->
+                <div class="slds-modal__content slds-p-around_medium">
+                    <div class="slds-grid slds-grid_align-center">
+                        <lightning-radio-group
+                            name="status"
+                            label="Select a status"
+                            options={statusOptions}
+                            value={selectedStatus}
+                            type="radio"
+                            onchange={handleStatusChange}
+                        ></lightning-radio-group>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeModal}></lightning-button>
+                    <lightning-button variant="brand" class="slds-p-left_small" label="Save" onclick={saveStatus} disabled={saveDisabled}></lightning-button>
+                </footer>
+            </div>
+        </section>
+
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
