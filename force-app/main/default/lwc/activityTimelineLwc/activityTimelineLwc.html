@@ -1,0 +1,31 @@
+<!--
+  @description       :
+  @author            : Alden Vivian
+  @group             : 
+  @last modified on  : 09-16-2025
+  @last modified by  : Alden Vivian
+  Modifications Log
+  Ver   Date         Author         Modification
+  1.0   08-28-2025   Alden Vivian   Initial Version
+-->
+<template>
+    <lightning-card title="Activity" icon-name="standard:all">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Loading"></lightning-spinner>
+        </template>
+
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+            <template for:each={timelineGroups} for:item="group">
+                <template if:true={group.items}>
+                    <lightning-accordion-section class="" key={group.sectionName} name={group.sectionName} label={group.name}>
+                        <ul class="slds-timeline">
+                            <template for:each={group.items} for:item="item">
+                                <c-activity-timeline-item-lwc key={item.Id} item={item} current-user-timezone={userTzId}></c-activity-timeline-item-lwc>
+                            </template>
+                        </ul>
+                    </lightning-accordion-section>
+                </template>
+            </template>
+        </lightning-accordion>
+    </lightning-card>
+</template>
